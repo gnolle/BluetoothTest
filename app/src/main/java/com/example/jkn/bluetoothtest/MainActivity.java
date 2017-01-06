@@ -1,5 +1,6 @@
 package com.example.jkn.bluetoothtest;
 
+import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -8,6 +9,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static final String BT_MODULE_NAME = "HC-05";
     private static final int REQUEST_ENABLE_BT = 1;
+    private static final int REQUEST_PERMISSION_CHECK = 2;
 
     private BluetoothAdapter mBtAdapter;
     private BluetoothDevice mBtDevice;
@@ -56,11 +62,42 @@ public class MainActivity extends AppCompatActivity {
 
         if (mBtDevice == null) {
             setConnectionStatus(BtConnectionStatus.DISCOVERING);
-            mBtAdapter.startDiscovery();
+            if (checkLocationPermission()) {
+                mBtAdapter.startDiscovery();
+            } else {
+                requestForPermissions();
+            }
+
         } else {
             setConnectionStatus(BtConnectionStatus.CONNECTING);
             connect();
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_PERMISSION_CHECK: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "Permission granted.");
+                    mBtAdapter.startDiscovery();
+                } else {
+                    finish();
+                }
+            }
+        }
+    }
+
+    private boolean checkLocationPermission() {
+        return ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestForPermissions() {
+        ActivityCompat.requestPermissions(
+                this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                REQUEST_PERMISSION_CHECK);
     }
 
     private void setConnectionStatus(BtConnectionStatus status) {
@@ -141,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
                             deviceName + " address: " +
                             deviceHardwareAddress);
 
-                    if (deviceName.equals(BT_MODULE_NAME)) {
+                    if (deviceName != null && deviceName.equals(BT_MODULE_NAME)) {
                         Log.d(TAG, "Found Bluetooth device with name " + deviceName + ".");
                         mBtDevice = device;
                         mBtAdapter.cancelDiscovery();
