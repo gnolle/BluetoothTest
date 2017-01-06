@@ -8,16 +8,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.UUID;
 
+/**
+ * Activity to connect to HC-05 Bluetooth module.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -30,17 +29,12 @@ public class MainActivity extends AppCompatActivity {
     private BtConnectThread mBtConnectThread;
     private BluetoothSocket mBtSocket;
     private BroadcastReceiver mDeviceDiscoveryReceiver;
+    private BtConnectionStatus mBtConnectionStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        try {
-            initBtAdapter();
-        } catch (BtException be) {
-            Log.d(TAG, "Could not initialise Bluetooth adapter.");
-        }
 
         initDeviceDiscoveryReceiver();
         registerDeviceDiscoveryReceiver();
@@ -50,13 +44,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        setConnectionStatus(BtConnectionStatus.NOT_CONNECTED);
         resetConnectThread();
 
+        try {
+            initBtAdapter();
+        } catch (BtException be) {
+            Log.d(TAG, "Could not initialise Bluetooth adapter.");
+            return;
+        }
+
         if (mBtDevice == null) {
+            setConnectionStatus(BtConnectionStatus.DISCOVERING);
             mBtAdapter.startDiscovery();
         } else {
+            setConnectionStatus(BtConnectionStatus.CONNECTING);
             connect();
         }
+    }
+
+    private void setConnectionStatus(BtConnectionStatus status) {
+        Log.d(TAG, "Connection status: " + mBtConnectionStatus + " -> " + status);
+        mBtConnectionStatus = status;
     }
 
     private void resetConnectThread() {
@@ -67,18 +76,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void connect() {
-        mBtConnectThread = new BtConnectThread(mBtDevice, SPP_UUID, new BtConnectThread.BtConnectionCallback() {
-            @Override
-            public void onSuccess(BluetoothSocket bluetoothSocket) {
-                mBtSocket = bluetoothSocket;
-                Log.d(TAG, "Connection attempt succeeded.");
-            }
+        mBtConnectThread = new BtConnectThread(
+                mBtDevice, SPP_UUID,
+                new BtConnectThread.BtConnectionCallback() {
+                    @Override
+                    public void onSuccess(BluetoothSocket bluetoothSocket) {
+                        mBtSocket = bluetoothSocket;
+                        setConnectionStatus(BtConnectionStatus.CONNECTED);
+                        Log.d(TAG, "Connection attempt succeeded.");
+                    }
 
-            @Override
-            public void onFailure(String message) {
-                Log.d(TAG, message);
-            }
-        });
+                    @Override
+                    public void onFailure(String message) {
+                        setConnectionStatus(BtConnectionStatus.NOT_CONNECTED);
+                        Log.d(TAG, message);
+                    }
+                });
 
         mBtConnectThread.run();
 
@@ -104,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-
             case REQUEST_ENABLE_BT:
                 if (resultCode == Activity.RESULT_OK) {
                     Log.d(TAG, "Bluetooth enabled.");
@@ -120,10 +132,15 @@ public class MainActivity extends AppCompatActivity {
                 String action = intent.getAction();
 
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    BluetoothDevice device =
+                            intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     String deviceName = device.getName();
                     String deviceHardwareAddress = device.getAddress();
-                    Log.d(TAG, "Found device. Name: " + deviceName + " address: " + deviceHardwareAddress);
+
+                    Log.d(TAG, "Found device. Name: " +
+                            deviceName + " address: " +
+                            deviceHardwareAddress);
+
                     if (deviceName.equals(BT_MODULE_NAME)) {
                         Log.d(TAG, "Found Bluetooth device with name " + deviceName + ".");
                         mBtDevice = device;

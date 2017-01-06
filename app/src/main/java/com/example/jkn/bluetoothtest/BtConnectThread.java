@@ -16,27 +16,27 @@ class BtConnectThread extends Thread {
 
     private static final String TAG = BtConnectThread.class.getSimpleName();
     private BluetoothSocket mSocket;
+    private BluetoothDevice mDevice;
+    private UUID mUuid;
     private BtConnectionCallback mCallback;
 
     BtConnectThread(BluetoothDevice btDevice, UUID uuid, BtConnectionCallback connectionCallback) {
+        mDevice = btDevice;
+        mUuid = uuid;
         mCallback = connectionCallback;
-        try {
-            mSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
-        } catch (IOException e) {
-            Log.e(TAG, "Could not create socket.", e);
-            connectionCallback.onFailure("Could not create socket.");
-        }
     }
 
     public void run() {
         try {
+            mSocket = mDevice.createRfcommSocketToServiceRecord(mUuid);
+            mCallback.onFailure("Could not create socket.");
             mSocket.connect();
         } catch (IOException connectException) {
+            Log.e(TAG, "Could not create socket.", connectException);
             try {
                 mSocket.close();
             } catch (IOException closeException) {
                 Log.e(TAG, "Could not close the client socket", closeException);
-
             }
             mCallback.onFailure("Could not connect to socket.");
             return;
