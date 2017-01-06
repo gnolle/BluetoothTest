@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         setConnectionStatus(BtConnectionStatus.NOT_CONNECTED);
-        resetConnectThread();
 
         try {
             initBtAdapter();
@@ -130,8 +129,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        mBtConnectThread.run();
-
+        mBtConnectThread.start();
     }
 
     private void initBtAdapter() throws BtException {
@@ -192,6 +190,12 @@ public class MainActivity extends AppCompatActivity {
     private void registerDeviceDiscoveryReceiver() {
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mDeviceDiscoveryReceiver, filter);
+    }
+
+    @Override
+    protected void onPause() {
+        resetConnectThread();
+        super.onPause();
     }
 
     @Override

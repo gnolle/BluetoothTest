@@ -29,7 +29,6 @@ class BtConnectThread extends Thread {
     public void run() {
         try {
             mSocket = mDevice.createRfcommSocketToServiceRecord(mUuid);
-            mCallback.onFailure("Could not create socket.");
             mSocket.connect();
         } catch (IOException connectException) {
             Log.e(TAG, "Could not create socket.", connectException);
