@@ -12,27 +12,29 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.nio.charset.Charset;
 import java.util.UUID;
 
 /**
  * Activity to connect to HC-05 Bluetooth module.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BtConnectThread.BtConnectionCallback, BtConnectedThread.BtResponseListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static final String BT_MODULE_NAME = "HC-05";
+    private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_PERMISSION_CHECK = 2;
 
     private BluetoothAdapter mBtAdapter;
     private BluetoothDevice mBtDevice;
     private BtConnectThread mBtConnectThread;
+    private BtConnectedThread mBtConnectedThread;
     private BluetoothSocket mBtSocket;
     private BroadcastReceiver mDeviceDiscoveryReceiver;
     private BtConnectionStatus mBtConnectionStatus;
@@ -104,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         mBtConnectionStatus = status;
     }
 
-    private void resetConnectThread() {
+    private void killConnectThread() {
         if (mBtConnectThread != null) {
             mBtConnectThread.cancel();
             mBtConnectThread = null;
@@ -113,23 +115,41 @@ public class MainActivity extends AppCompatActivity {
 
     private void connect() {
         mBtConnectThread = new BtConnectThread(
-                mBtDevice, SPP_UUID,
-                new BtConnectThread.BtConnectionCallback() {
-                    @Override
-                    public void onSuccess(BluetoothSocket bluetoothSocket) {
-                        mBtSocket = bluetoothSocket;
-                        setConnectionStatus(BtConnectionStatus.CONNECTED);
-                        Log.d(TAG, "Connection attempt succeeded.");
-                    }
-
-                    @Override
-                    public void onFailure(String message) {
-                        setConnectionStatus(BtConnectionStatus.NOT_CONNECTED);
-                        Log.d(TAG, message);
-                    }
-                });
+                mBtDevice,
+                SPP_UUID,
+                this);
 
         mBtConnectThread.start();
+    }
+
+    @Override
+    public void onConnectionSuccess(BluetoothSocket bluetoothSocket) {
+        mBtSocket = bluetoothSocket;
+        setConnectionStatus(BtConnectionStatus.CONNECTED);
+        Log.d(TAG, "Connection attempt succeeded.");
+        setUpConnectedThread();
+    }
+
+    @Override
+    public void onConnectionFailure(String message) {
+        setConnectionStatus(BtConnectionStatus.NOT_CONNECTED);
+        Log.d(TAG, message);
+    }
+
+    private void setUpConnectedThread() {
+        mBtConnectedThread = new BtConnectedThread(mBtSocket, this);
+        mBtConnectedThread.start();
+    }
+
+    @Override
+    public void handleBtResponse(byte[] response) {
+        Log.d(TAG, "Response: " + new String(response, UTF8_CHARSET));
+    }
+
+    private void writeBtMessage(String message) {
+        if (mBtConnectedThread != null) {
+            mBtConnectedThread.write(message.getBytes(UTF8_CHARSET));
+        }
     }
 
     private void initBtAdapter() throws BtException {
@@ -194,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        resetConnectThread();
+        killConnectThread();
         super.onPause();
     }
 

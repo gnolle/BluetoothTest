@@ -37,12 +37,12 @@ class BtConnectThread extends Thread {
             } catch (IOException closeException) {
                 Log.e(TAG, "Could not close the client socket", closeException);
             }
-            mCallback.onFailure("Could not connect to socket.");
+            mCallback.onConnectionFailure("Could not connect to socket.");
             return;
         }
 
         // The connection attempt succeeded
-        mCallback.onSuccess(mSocket);
+        mCallback.onConnectionSuccess(mSocket);
     }
 
     void cancel() {
@@ -54,8 +54,8 @@ class BtConnectThread extends Thread {
     }
 
     interface BtConnectionCallback {
-        void onSuccess(BluetoothSocket bluetoothSocket);
+        void onConnectionSuccess(BluetoothSocket bluetoothSocket);
 
-        void onFailure(String message);
+        void onConnectionFailure(String message);
     }
 }
