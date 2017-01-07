@@ -15,6 +15,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import java.nio.charset.Charset;
 import java.util.UUID;
@@ -39,13 +41,49 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     private BroadcastReceiver mDeviceDiscoveryReceiver;
     private BtConnectionStatus mBtConnectionStatus;
 
+    private Button onButton;
+    private Button offButton;
+    private Button testButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setViewReferences();
+        setClickListeners();
 
         initDeviceDiscoveryReceiver();
         registerDeviceDiscoveryReceiver();
+    }
+
+    private void setViewReferences() {
+        onButton = (Button) findViewById(R.id.btn_on);
+        offButton = (Button) findViewById(R.id.btn_off);
+        testButton = (Button) findViewById(R.id.btn_test_data);
+    }
+
+    private void setClickListeners() {
+        onButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String onCommand = "on";
+                writeBtMessage(onCommand);
+            }
+        });
+        offButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String onCommand = "off";
+                writeBtMessage(onCommand);
+            }
+        });
+        testButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String onCommand = "Very long test data text. Check if separated.";
+                writeBtMessage(onCommand);
+            }
+        });
     }
 
     @Override
@@ -54,20 +92,27 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
 
         setConnectionStatus(BtConnectionStatus.NOT_CONNECTED);
 
-        try {
-            initBtAdapter();
-        } catch (BtException be) {
-            Log.d(TAG, "Could not initialise Bluetooth adapter.");
-            return;
+        if (isLocationPermissionGranted()) {
+            initConnection();
+        } else {
+            requestLocationPermission();
         }
+    }
 
+    public void initConnection() {
+        initBtAdapter();
+
+        if (isBtAvailable()) {
+            startConnection();
+        } else {
+            requestEnableBt();
+        }
+    }
+
+    private void startConnection() {
         if (mBtDevice == null) {
             setConnectionStatus(BtConnectionStatus.DISCOVERING);
-            if (checkLocationPermission()) {
-                mBtAdapter.startDiscovery();
-            } else {
-                requestForPermissions();
-            }
+            mBtAdapter.startDiscovery();
 
         } else {
             setConnectionStatus(BtConnectionStatus.CONNECTING);
@@ -81,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
             case REQUEST_PERMISSION_CHECK: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.d(TAG, "Permission granted.");
-                    mBtAdapter.startDiscovery();
                 } else {
                     finish();
                 }
@@ -89,12 +133,12 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
         }
     }
 
-    private boolean checkLocationPermission() {
+    private boolean isLocationPermissionGranted() {
         return ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void requestForPermissions() {
+    private void requestLocationPermission() {
         ActivityCompat.requestPermissions(
                 this,
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -113,6 +157,13 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
         }
     }
 
+    private void killConnectedThread() {
+        if (mBtConnectedThread != null) {
+            mBtConnectedThread.cancel();
+            mBtConnectedThread = null;
+        }
+    }
+
     private void connect() {
         mBtConnectThread = new BtConnectThread(
                 mBtDevice,
@@ -125,9 +176,9 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     @Override
     public void onConnectionSuccess(BluetoothSocket bluetoothSocket) {
         mBtSocket = bluetoothSocket;
+        setUpConnectedThread();
         setConnectionStatus(BtConnectionStatus.CONNECTED);
         Log.d(TAG, "Connection attempt succeeded.");
-        setUpConnectedThread();
     }
 
     @Override
@@ -142,26 +193,23 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     }
 
     @Override
-    public void handleBtResponse(byte[] response) {
-        Log.d(TAG, "Response: " + new String(response, UTF8_CHARSET));
+    public void handleBtResponse(String response) {
+        Log.d(TAG, "Response: " + response);
     }
 
     private void writeBtMessage(String message) {
-        if (mBtConnectedThread != null) {
+        if (mBtConnectedThread != null && mBtConnectionStatus == BtConnectionStatus.CONNECTED) {
             mBtConnectedThread.write(message.getBytes(UTF8_CHARSET));
         }
     }
 
-    private void initBtAdapter() throws BtException {
+    private boolean isBtAvailable() {
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+        return (mBtAdapter != null && mBtAdapter.isEnabled());
+    }
 
-        if (mBtAdapter == null) {
-            throw new BtException();
-        }
-
-        if (!mBtAdapter.isEnabled()) {
-            requestEnableBt();
-        }
+    private void initBtAdapter() {
+        mBtAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
     private void requestEnableBt() {
@@ -177,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
                     Log.d(TAG, "Bluetooth enabled.");
                 } else {
                     Log.d(TAG, "Bluetooth not enabled.");
+                    finish();
                 }
         }
     }
@@ -215,6 +264,7 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     @Override
     protected void onPause() {
         killConnectThread();
+        killConnectedThread();
         super.onPause();
     }
 

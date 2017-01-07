@@ -20,7 +20,7 @@ class BtConnectedThread extends Thread {
     private byte[] mBuffer;
     private BtResponseListener mResponseListener;
 
-    public BtConnectedThread(BluetoothSocket socket, BtResponseListener responseListener) {
+    BtConnectedThread(BluetoothSocket socket, BtResponseListener responseListener) {
         mSocket = socket;
         mResponseListener = responseListener;
 
@@ -43,6 +43,7 @@ class BtConnectedThread extends Thread {
         while (true) {
             try {
                 numBytes = mInStream.read(mBuffer);
+                mResponseListener.handleBtResponse(new String(mBuffer, 0, numBytes));
                 // Send the obtained bytes to the UI activity.
             } catch (IOException e) {
                 Log.d(TAG, "Input stream was disconnected", e);
@@ -51,7 +52,7 @@ class BtConnectedThread extends Thread {
         }
     }
 
-    public void write(byte[] bytes) {
+    void write(byte[] bytes) {
         try {
             mOutStream.write(bytes);
         } catch (IOException e) {
@@ -59,8 +60,7 @@ class BtConnectedThread extends Thread {
         }
     }
 
-    // Call this method from the main activity to shut down the connection.
-    public void cancel() {
+    void cancel() {
         try {
             mSocket.close();
         } catch (IOException e) {
@@ -69,7 +69,7 @@ class BtConnectedThread extends Thread {
     }
 
     interface BtResponseListener {
-        void handleBtResponse(byte[] response);
+        void handleBtResponse(String response);
     }
 
 }
