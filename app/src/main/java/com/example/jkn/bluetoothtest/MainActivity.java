@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static final String BT_MODULE_NAME = "HC-05";
-    private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_PERMISSION_CHECK = 2;
 
@@ -80,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String onCommand = "Very long test data text. Check if separated.";
+                String onCommand = "Very long test data text. äöüß Check if separated. äüü";
                 writeBtMessage(onCommand);
             }
         });
@@ -199,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
 
     private void writeBtMessage(String message) {
         if (mBtConnectedThread != null && mBtConnectionStatus == BtConnectionStatus.CONNECTED) {
-            mBtConnectedThread.write(message.getBytes(UTF8_CHARSET));
+            mBtConnectedThread.write(message);
         }
     }
 

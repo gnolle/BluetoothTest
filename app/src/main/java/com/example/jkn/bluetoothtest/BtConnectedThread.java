@@ -6,6 +6,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 /**
  * Created by Jan on 06.01.2017.
@@ -14,6 +15,8 @@ import java.io.OutputStream;
 class BtConnectedThread extends Thread {
 
     private static final String TAG = BtConnectedThread.class.getSimpleName();
+    private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
+
     private BluetoothSocket mSocket;
     private InputStream mInStream;
     private OutputStream mOutStream;
@@ -52,9 +55,10 @@ class BtConnectedThread extends Thread {
         }
     }
 
-    void write(byte[] bytes) {
+    void write(String message) {
         try {
-            mOutStream.write(bytes);
+            message += '\r';
+            mOutStream.write(message.getBytes(UTF8_CHARSET));
         } catch (IOException e) {
             Log.e(TAG, "Error occurred when sending data", e);
         }
