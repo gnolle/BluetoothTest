@@ -24,35 +24,28 @@ public abstract class ActionCard extends FrameLayout {
                 R.styleable.ActionCard,
                 0, 0);
 
-        try {
-            mTextTop = a.getString(R.styleable.ActionCard_textTop);
-            mTextBottom = a.getString(R.styleable.ActionCard_textBottom);
-        } finally {
-            a.recycle();
-        }
+        mTextTop = a.getString(R.styleable.ActionCard_textTop);
+        mTextBottom = a.getString(R.styleable.ActionCard_textBottom);
 
-        inflateLayout();
-        init();
+        a.recycle();
     }
 
     public void setTextTop(String textTop) {
         mTextTop = textTop;
         mTextViewTop.setText(mTextTop);
-        invalidate();
-        requestLayout();
+//        invalidate();
+//        requestLayout();
     }
 
     public void setTextBottom(String textBottom) {
         mTextBottom = textBottom;
-        mTextViewBottom.setText(mTextBottom );
-        invalidate();
-        requestLayout();
+        mTextViewBottom.setText(mTextBottom);
+//        invalidate();
+//        requestLayout();
     }
-
-    protected abstract void inflateLayout();
 
     protected void init() {
         setTextTop(mTextTop);
-        setTextBottom(mTextTop);
-    };
+        setTextBottom(mTextBottom);
+    }
 }

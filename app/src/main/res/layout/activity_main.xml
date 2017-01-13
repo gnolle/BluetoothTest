@@ -1,31 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.example.jkn.bluetoothtest.MainActivity">
 
-    <Button
+    <com.example.jkn.bluetoothtest.IconActionCard
         android:id="@+id/btn_on"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="LED on"/>
+        app:textTop="Turn on LED"
+        app:icon="@drawable/ic_light_on"
+        android:layout_weight="1" />
 
-    <Button
+    <com.example.jkn.bluetoothtest.IconActionCard
         android:id="@+id/btn_off"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="LED off"/>
+        app:textTop="Turn off LED"
+        app:icon="@drawable/ic_light_off"
+        android:layout_weight="1" />
 
-    <Button
+    <com.example.jkn.bluetoothtest.IconActionCard
         android:id="@+id/btn_test_data"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="Send test data"/>
+        app:textTop="Send test data"
+        app:icon="@drawable/ic_debug"
+        android:layout_weight="1" />
 
 </LinearLayout>

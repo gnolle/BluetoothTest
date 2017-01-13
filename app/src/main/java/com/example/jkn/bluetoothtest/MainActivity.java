@@ -18,7 +18,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import java.nio.charset.Charset;
 import java.util.UUID;
 
 /**
@@ -40,9 +39,9 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     private BroadcastReceiver mDeviceDiscoveryReceiver;
     private BtConnectionStatus mBtConnectionStatus;
 
-    private Button onButton;
-    private Button offButton;
-    private Button testButton;
+    private IconActionCard onAction;
+    private IconActionCard offAction;
+    private IconActionCard testAction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,27 +55,27 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     }
 
     private void setViewReferences() {
-        onButton = (Button) findViewById(R.id.btn_on);
-        offButton = (Button) findViewById(R.id.btn_off);
-        testButton = (Button) findViewById(R.id.btn_test_data);
+        onAction = (IconActionCard) findViewById(R.id.btn_on);
+        offAction = (IconActionCard) findViewById(R.id.btn_off);
+        testAction = (IconActionCard) findViewById(R.id.btn_test_data);
     }
 
     private void setClickListeners() {
-        onButton.setOnClickListener(new View.OnClickListener() {
+        onAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String onCommand = "on";
                 writeBtMessage(onCommand);
             }
         });
-        offButton.setOnClickListener(new View.OnClickListener() {
+        offAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String onCommand = "off";
                 writeBtMessage(onCommand);
             }
         });
-        testButton.setOnClickListener(new View.OnClickListener() {
+        testAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String onCommand = "Very long test data text. äöüß Check if separated. äüü";

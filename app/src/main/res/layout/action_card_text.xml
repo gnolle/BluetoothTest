@@ -17,7 +17,7 @@
             android:padding="24dp">
 
             <TextView
-                android:id="@+id/action_title"
+                android:id="@+id/text_top"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -28,7 +28,7 @@
                 android:id="@+id/action_text"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
-                android:layout_below="@id/action_title"
+                android:layout_below="@id/text_top"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="8dp"
                 android:gravity="center"
@@ -37,7 +37,7 @@
                 android:textSize="40sp" />
 
             <TextView
-                android:id="@+id/action_state"
+                android:id="@+id/text_bottom"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/action_text"

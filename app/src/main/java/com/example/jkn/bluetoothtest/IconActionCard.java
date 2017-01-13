@@ -7,6 +7,9 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 /**
  * Created by jkn on 13.01.17.
@@ -27,18 +30,25 @@ public class IconActionCard extends ActionCard {
 
         mIcon = a.getDrawable(R.styleable.IconActionCard_icon);
         a.recycle();
+
+        inflateLayout();
+        init();
     }
 
-    @Override
-    protected void inflateLayout() {
-        LayoutInflater mInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = mInflater.inflate(R.layout.action_card_icon, this, true);
+    private void inflateLayout() {
+        View view = inflate(getContext(), R.layout.action_card_icon, this);
         mIconView = (ImageView) view.findViewById(R.id.display_mode_icon);
+        mTextViewTop = (TextView) view.findViewById(R.id.text_top);
+        mTextViewBottom = (TextView) view.findViewById(R.id.text_bottom);
     }
 
     @Override
     protected void init() {
         super.init();
-        mIconView.setImageDrawable(mIcon);
+        setIcon(mIcon);
+    }
+
+    public void setIcon(Drawable icon) {
+        mIconView.setImageDrawable(icon);
     }
 }
