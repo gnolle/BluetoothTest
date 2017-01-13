@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ActionCard">
+        <attr name="textTop" format="string" />
+        <attr name="textBottom" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="IconActionCard">
+        <attr name="icon" format="reference" />
+    </declare-styleable>
+
+</resources>

@@ -11,8 +11,7 @@
     <style name="action_card_icon_style">
         <item name="android:layout_width">48dp</item>
         <item name="android:layout_height">48dp</item>
-        <item name="android:tint">#000</item>
-        <item name="android:alpha">0.56</item>
+        <item name="android:tint">@color/colorAccent</item>
     </style>
 
 </resources>
