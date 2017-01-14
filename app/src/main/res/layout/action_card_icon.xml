@@ -7,8 +7,14 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?android:attr/selectableItemBackground"
         app:cardCornerRadius="4dp"
         app:cardUseCompatPadding="true">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?android:attr/selectableItemBackground">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -34,14 +40,16 @@
 
                 <TextView
                     android:id="@+id/text_bottom"
-                    android:layout_centerHorizontal="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/display_mode_icon"
+                    android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp"
                     android:text="Uhrzeit" />
 
             </RelativeLayout>
+
+        </FrameLayout>
 
     </android.support.v7.widget.CardView>
 

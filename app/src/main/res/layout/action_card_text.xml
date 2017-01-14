@@ -10,42 +10,49 @@
         app:cardCornerRadius="4dp"
         app:cardUseCompatPadding="true">
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="24dp">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?android:attr/selectableItemBackground">
 
-            <TextView
-                android:id="@+id/text_top"
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="Temperatur"
-                android:textStyle="bold" />
+                android:layout_gravity="center"
+                android:padding="24dp">
 
-            <TextView
-                android:id="@+id/action_text"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_below="@id/text_top"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:text="28°"
-                android:textColor="@color/colorAccent"
-                android:textSize="40sp" />
+                <TextView
+                    android:id="@+id/text_top"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Temperatur"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/text_bottom"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/action_text"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"
-                android:text="11.1.17 - 14:30" />
+                <TextView
+                    android:id="@+id/action_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_below="@id/text_top"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text="28°"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="40sp" />
 
-        </RelativeLayout>
+                <TextView
+                    android:id="@+id/text_bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/action_text"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:text="11.1.17 - 14:30" />
+
+            </RelativeLayout>
+
+        </FrameLayout>
 
     </android.support.v7.widget.CardView>
 
