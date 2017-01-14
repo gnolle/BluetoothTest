@@ -8,21 +8,31 @@
     android:orientation="vertical"
     tools:context="com.example.jkn.bluetoothtest.MainActivity">
 
-    <com.example.jkn.bluetoothtest.IconActionCard
-        android:id="@+id/btn_on"
+    <android.support.percent.PercentRelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:textTop="Turn on LED"
-        app:icon="@drawable/ic_light_on"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:orientation="horizontal">
 
-    <com.example.jkn.bluetoothtest.IconActionCard
-        android:id="@+id/btn_off"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:textTop="Turn off LED"
-        app:icon="@drawable/ic_light_off"
-        android:layout_weight="1" />
+        <com.example.jkn.bluetoothtest.TextActionCard
+            android:id="@+id/temperature_card"
+            app:layout_widthPercent="50%"
+            app:layout_heightPercent="100%"
+            app:textTop="Temperatur"
+            app:textAction="24°"
+            app:textBottom="14.01.17 - 11:07"
+            app:icon="@drawable/ic_light_on" />
+
+        <com.example.jkn.bluetoothtest.IconActionCard
+            android:layout_toRightOf="@id/temperature_card"
+            android:id="@+id/btn_led"
+            android:layout_height="match_parent"
+            app:layout_widthPercent="50%"
+            app:layout_heightPercent="100%"
+            app:textTop="Test-LED"
+            app:icon="@drawable/ic_light_off" />
+
+    </android.support.percent.PercentRelativeLayout>
 
     <com.example.jkn.bluetoothtest.IconActionCard
         android:id="@+id/btn_test_data"

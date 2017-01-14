@@ -12,11 +12,11 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 import java.util.UUID;
 
@@ -39,9 +39,10 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     private BroadcastReceiver mDeviceDiscoveryReceiver;
     private BtConnectionStatus mBtConnectionStatus;
 
-    private IconActionCard onAction;
-    private IconActionCard offAction;
+    private IconActionCard ledAction;
     private IconActionCard testAction;
+
+    private boolean mIsLedOn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,24 +56,19 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     }
 
     private void setViewReferences() {
-        onAction = (IconActionCard) findViewById(R.id.btn_on);
-        offAction = (IconActionCard) findViewById(R.id.btn_off);
+        ledAction = (IconActionCard) findViewById(R.id.btn_led);
         testAction = (IconActionCard) findViewById(R.id.btn_test_data);
     }
 
     private void setClickListeners() {
-        onAction.setOnClickListener(new View.OnClickListener() {
+        ledAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String onCommand = "on";
-                writeBtMessage(onCommand);
-            }
-        });
-        offAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String onCommand = "off";
-                writeBtMessage(onCommand);
+                if (mIsLedOn) {
+                    switchTestLedOff();
+                } else {
+                    switchTestLedOn();
+                }
             }
         });
         testAction.setOnClickListener(new View.OnClickListener() {
@@ -82,6 +78,20 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
                 writeBtMessage(onCommand);
             }
         });
+    }
+
+    private void switchTestLedOn() {
+        String onCommand = "on";
+        writeBtMessage(onCommand);
+        mIsLedOn = true;
+        ledAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_light_on));
+    }
+
+    private void switchTestLedOff() {
+        String onCommand = "off";
+        writeBtMessage(onCommand);
+        mIsLedOn = false;
+        ledAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_light_off));
     }
 
     @Override

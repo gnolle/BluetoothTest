@@ -10,4 +10,8 @@
         <attr name="icon" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="TextActionCard">
+        <attr name="textAction" format="string" />
+    </declare-styleable>
+
 </resources>

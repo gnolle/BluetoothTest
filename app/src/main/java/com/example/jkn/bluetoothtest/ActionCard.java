@@ -33,15 +33,11 @@ public abstract class ActionCard extends FrameLayout {
     public void setTextTop(String textTop) {
         mTextTop = textTop;
         mTextViewTop.setText(mTextTop);
-//        invalidate();
-//        requestLayout();
     }
 
     public void setTextBottom(String textBottom) {
         mTextBottom = textBottom;
         mTextViewBottom.setText(mTextBottom);
-//        invalidate();
-//        requestLayout();
     }
 
     protected void init() {
