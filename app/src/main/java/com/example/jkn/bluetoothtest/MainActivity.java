@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -31,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_PERMISSION_CHECK = 2;
 
+    private static final int TEMP_READ_INTERVAL = 5000;
+
     private BluetoothAdapter mBtAdapter;
     private BluetoothDevice mBtDevice;
     private BtConnectThread mBtConnectThread;
@@ -42,6 +45,10 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     private IconActionCard ledAction;
     private IconActionCard testAction;
     private IconActionCard bluetoothStatusCard;
+    private TextActionCard tempStatusCard;
+
+    private Handler mHandler;
+    private Runnable mTemperatureReadingThread;
 
     private boolean mIsLedOn = false;
 
@@ -54,12 +61,41 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
 
         initDeviceDiscoveryReceiver();
         registerDeviceDiscoveryReceiver();
+
+        createTemperatureScheduler();
+        createTemperatureReadingThread();
     }
 
     private void setViewReferences() {
         ledAction = (IconActionCard) findViewById(R.id.btn_led);
         testAction = (IconActionCard) findViewById(R.id.btn_test_data);
         bluetoothStatusCard = (IconActionCard) findViewById(R.id.btn_bluetooth);
+        tempStatusCard = (TextActionCard) findViewById(R.id.temperature_card);
+    }
+
+    private void createTemperatureScheduler() {
+        mHandler = new Handler();
+    }
+
+    private void createTemperatureReadingThread() {
+        mTemperatureReadingThread = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    requestTemperature();
+                } finally {
+                    mHandler.postDelayed(mTemperatureReadingThread, TEMP_READ_INTERVAL);
+                }
+            }
+        };
+    }
+
+    private void startTemperatureReading() {
+        mTemperatureReadingThread.run();
+    }
+
+    private void stopTemperatureReading() {
+        mHandler.removeCallbacks(mTemperatureReadingThread);
     }
 
     private void setClickListeners() {
@@ -94,6 +130,11 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
         writeBtMessage(onCommand);
         mIsLedOn = false;
         ledAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_light_off));
+    }
+
+    private void requestTemperature() {
+        String tempRequestCommand = "TMP";
+        writeBtMessage(tempRequestCommand);
     }
 
     @Override
@@ -200,6 +241,8 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
         setUpConnectedThread();
         setConnectionStatus(BtConnectionStatus.CONNECTED);
         Log.d(TAG, "Connection attempt succeeded.");
+
+        startTemperatureReading();
     }
 
     @Override
@@ -216,6 +259,29 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     @Override
     public void handleBtResponse(String response) {
         Log.d(TAG, "Response: " + response);
+
+        if (response.length() >= 3) {
+            String responseType = response.substring(0, 3);
+
+            switch (responseType) {
+                case "TMP":
+                    try {
+                        float temp = Float.valueOf(response.substring(3, response.length()));
+                        updateTemperature(temp);
+                    } catch (NumberFormatException e) {
+                        Log.d(TAG, "Wrong temperature format", e);
+                    }
+            }
+        }
+    }
+
+    private void updateTemperature(final float temperature) {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tempStatusCard.setActionText(String.valueOf(temperature) + "°");
+            }
+        });
     }
 
     private void writeBtMessage(String message) {
@@ -286,6 +352,7 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     protected void onPause() {
         killConnectThread();
         killConnectedThread();
+        stopTemperatureReading();
         super.onPause();
     }
 
