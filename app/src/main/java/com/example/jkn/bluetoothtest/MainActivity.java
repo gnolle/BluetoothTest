@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
 
     private IconActionCard ledAction;
     private IconActionCard testAction;
+    private IconActionCard bluetoothStatusCard;
 
     private boolean mIsLedOn = false;
 
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     private void setViewReferences() {
         ledAction = (IconActionCard) findViewById(R.id.btn_led);
         testAction = (IconActionCard) findViewById(R.id.btn_test_data);
+        bluetoothStatusCard = (IconActionCard) findViewById(R.id.btn_bluetooth);
     }
 
     private void setClickListeners() {
@@ -156,6 +158,17 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     private void setConnectionStatus(BtConnectionStatus status) {
         Log.d(TAG, "Connection status: " + mBtConnectionStatus + " -> " + status);
         mBtConnectionStatus = status;
+        updateConnectionStatus();
+    }
+
+    private void updateConnectionStatus() {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                bluetoothStatusCard.setIcon(BtConnectionStatus.getDrawableForStatus(MainActivity.this, mBtConnectionStatus));
+                bluetoothStatusCard.setTextBottom(BtConnectionStatus.getTextForStatus(mBtConnectionStatus));
+            }
+        });
     }
 
     private void killConnectThread() {

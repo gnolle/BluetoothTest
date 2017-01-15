@@ -16,11 +16,11 @@ class BtConnectedThread extends Thread {
 
     private static final String TAG = BtConnectedThread.class.getSimpleName();
     private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
+    private static final int MAX_RESPONSE_LENGTH = 128;
 
     private BluetoothSocket mSocket;
     private InputStream mInStream;
     private OutputStream mOutStream;
-    private byte[] mBuffer;
     private BtResponseListener mResponseListener;
 
     BtConnectedThread(BluetoothSocket socket, BtResponseListener responseListener) {
@@ -40,19 +40,37 @@ class BtConnectedThread extends Thread {
     }
 
     public void run() {
-        mBuffer = new byte[1024];
-        int numBytes;
+        char[] buffer = new char[MAX_RESPONSE_LENGTH];
+        int pos = 0;
+        int serialByte;
 
         while (true) {
             try {
-                numBytes = mInStream.read(mBuffer);
-                mResponseListener.handleBtResponse(new String(mBuffer, 0, numBytes));
-                // Send the obtained bytes to the UI activity.
+                serialByte = mInStream.read();
+                if (serialByte > 0) {
+                    switch (serialByte) {
+                        case '\n':
+                            break;
+                        case '\r':
+                            handleResponse(buffer, pos);
+                            pos = 0;
+                            break;
+                        default:
+                        if (pos < MAX_RESPONSE_LENGTH - 1) {
+                            buffer[pos] = (char) serialByte;
+                            pos++;
+                        }
+                    }
+                }
             } catch (IOException e) {
                 Log.d(TAG, "Input stream was disconnected", e);
                 break;
             }
         }
+    }
+
+    private void handleResponse(char[] response, int length) {
+        mResponseListener.handleBtResponse(new String(response, 0, length));
     }
 
     void write(String message) {
