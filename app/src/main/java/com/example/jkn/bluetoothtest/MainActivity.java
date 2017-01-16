@@ -133,8 +133,7 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     }
 
     private void requestTemperature() {
-        String tempRequestCommand = "TMP";
-        writeBtMessage(tempRequestCommand);
+        writeBtMessage(BtCommands.REQUEST_TEMPERATURE);
     }
 
     @Override
@@ -260,19 +259,20 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     public void handleBtResponse(String response) {
         Log.d(TAG, "Response: " + response);
 
-        if (response.length() >= 3) {
-            String responseType = response.substring(0, 3);
+        try {
+            BtResponse btResponse = BtResponseParser.parseResponse(response);
 
-            switch (responseType) {
-                case "TMP":
-                    try {
-                        float temp = Float.valueOf(response.substring(3, response.length()));
-                        updateTemperature(temp);
-                    } catch (NumberFormatException e) {
-                        Log.d(TAG, "Wrong temperature format", e);
-                    }
+            switch (btResponse.getResponseType()) {
+                case TEMPERATURE:
+                    handleTemperatureResponse((BtTemperatureResponse) btResponse);
             }
+        } catch (BtException e) {
+            Log.d(TAG, e.getMessage(), e);
         }
+    }
+
+    private void handleTemperatureResponse(BtTemperatureResponse temperatureResponse) {
+        updateTemperature(temperatureResponse.getTemperature());
     }
 
     private void updateTemperature(final float temperature) {
