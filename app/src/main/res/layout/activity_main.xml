@@ -19,9 +19,9 @@
             app:icon="@drawable/ic_light_on"
             app:layout_heightPercent="100%"
             app:layout_widthPercent="50%"
-            app:textAction="24°"
-            app:textBottom="14.01.17 - 11:07"
-            app:textTop="Temperatur" />
+            app:textAction="\?"
+            app:textBottom="no data"
+            app:textTop="Temperature" />
 
         <com.example.jkn.bluetoothtest.IconActionCard
             android:id="@+id/btn_led"
@@ -30,7 +30,7 @@
             app:icon="@drawable/ic_light_off"
             app:layout_heightPercent="100%"
             app:layout_widthPercent="50%"
-            app:textTop="Test-LED" />
+            app:textTop="Test LED" />
 
     </android.support.percent.PercentRelativeLayout>
 

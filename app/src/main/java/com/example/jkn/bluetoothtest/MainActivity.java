@@ -280,6 +280,7 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
             @Override
             public void run() {
                 tempStatusCard.setActionText(String.valueOf(temperature) + "°");
+                tempStatusCard.setTextBottom(Utils.getReadableTimestamp());
             }
         });
     }
