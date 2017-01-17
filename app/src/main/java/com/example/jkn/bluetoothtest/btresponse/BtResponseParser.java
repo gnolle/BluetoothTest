@@ -1,4 +1,6 @@
-package com.example.jkn.bluetoothtest;
+package com.example.jkn.bluetoothtest.btresponse;
+
+import com.example.jkn.bluetoothtest.BtException;
 
 /**
  * Created by jkn on 16.01.17.

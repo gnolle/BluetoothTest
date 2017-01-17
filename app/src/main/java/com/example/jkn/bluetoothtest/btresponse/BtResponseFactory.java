@@ -1,4 +1,4 @@
-package com.example.jkn.bluetoothtest;
+package com.example.jkn.bluetoothtest.btresponse;
 
 import android.util.Log;
 

@@ -19,6 +19,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.example.jkn.bluetoothtest.btresponse.BtResponse;
+import com.example.jkn.bluetoothtest.btresponse.BtResponseParser;
+import com.example.jkn.bluetoothtest.btresponse.BtTemperatureResponse;
+import com.example.jkn.bluetoothtest.cards.IconActionCard;
+import com.example.jkn.bluetoothtest.cards.TextActionCard;
+
 import java.util.UUID;
 
 /**

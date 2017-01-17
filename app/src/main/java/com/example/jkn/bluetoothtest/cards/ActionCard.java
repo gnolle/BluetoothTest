@@ -1,10 +1,12 @@
-package com.example.jkn.bluetoothtest;
+package com.example.jkn.bluetoothtest.cards;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import com.example.jkn.bluetoothtest.R;
 
 /**
  * Created by jkn on 13.01.17.

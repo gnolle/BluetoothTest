@@ -1,15 +1,14 @@
-package com.example.jkn.bluetoothtest;
+package com.example.jkn.bluetoothtest.cards;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import com.example.jkn.bluetoothtest.R;
 
 /**
  * Created by jkn on 13.01.17.

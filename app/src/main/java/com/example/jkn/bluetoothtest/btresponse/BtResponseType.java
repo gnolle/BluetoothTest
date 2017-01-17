@@ -1,10 +1,10 @@
-package com.example.jkn.bluetoothtest;
+package com.example.jkn.bluetoothtest.btresponse;
 
 /**
  * Created by jkn on 16.01.17.
  */
 
-enum BtResponseType {
+public enum BtResponseType {
 
     TEMPERATURE("TMP");
 

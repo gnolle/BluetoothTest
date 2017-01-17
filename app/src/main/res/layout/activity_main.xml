@@ -14,7 +14,7 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <com.example.jkn.bluetoothtest.TextActionCard
+        <com.example.jkn.bluetoothtest.cards.TextActionCard
             android:id="@+id/temperature_card"
             app:icon="@drawable/ic_light_on"
             app:layout_heightPercent="100%"
@@ -23,7 +23,7 @@
             app:textBottom="no data"
             app:textTop="Temperature" />
 
-        <com.example.jkn.bluetoothtest.IconActionCard
+        <com.example.jkn.bluetoothtest.cards.IconActionCard
             android:id="@+id/btn_led"
             android:layout_height="match_parent"
             android:layout_toRightOf="@id/temperature_card"
@@ -40,7 +40,7 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <com.example.jkn.bluetoothtest.IconActionCard
+        <com.example.jkn.bluetoothtest.cards.IconActionCard
             android:id="@+id/btn_test_data"
             android:layout_weight="1"
             app:icon="@drawable/ic_debug"
@@ -48,7 +48,7 @@
             app:layout_widthPercent="50%"
             app:textTop="Send test data" />
 
-        <com.example.jkn.bluetoothtest.IconActionCard
+        <com.example.jkn.bluetoothtest.cards.IconActionCard
             android:layout_toRightOf="@id/btn_test_data"
             android:id="@+id/btn_bluetooth"
             android:layout_weight="1"
