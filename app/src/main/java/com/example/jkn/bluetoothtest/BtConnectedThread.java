@@ -40,7 +40,7 @@ class BtConnectedThread extends Thread {
     }
 
     public void run() {
-        char[] buffer = new char[MAX_RESPONSE_LENGTH];
+        byte[] buffer = new byte[MAX_RESPONSE_LENGTH];
         int pos = 0;
         int serialByte;
 
@@ -57,7 +57,7 @@ class BtConnectedThread extends Thread {
                             break;
                         default:
                         if (pos < MAX_RESPONSE_LENGTH - 1) {
-                            buffer[pos] = (char) serialByte;
+                            buffer[pos] = (byte) serialByte;
                             pos++;
                         }
                     }
@@ -69,8 +69,8 @@ class BtConnectedThread extends Thread {
         }
     }
 
-    private void handleResponse(char[] response, int length) {
-        mResponseListener.handleBtResponse(new String(response, 0, length));
+    private void handleResponse(byte[] response, int length) {
+        mResponseListener.handleBtResponse(new String(response, 0, length, UTF8_CHARSET));
     }
 
     void write(String message) {
