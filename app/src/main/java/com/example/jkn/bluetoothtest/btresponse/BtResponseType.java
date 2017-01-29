@@ -6,7 +6,8 @@ package com.example.jkn.bluetoothtest.btresponse;
 
 public enum BtResponseType {
 
-    TEMPERATURE("TMP");
+    TEMPERATURE("TMP"),
+    TIME("TIM");
 
     private String mPrefix;
 

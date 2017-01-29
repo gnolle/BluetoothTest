@@ -22,9 +22,11 @@ import android.view.View;
 import com.example.jkn.bluetoothtest.btresponse.BtResponse;
 import com.example.jkn.bluetoothtest.btresponse.BtResponseParser;
 import com.example.jkn.bluetoothtest.btresponse.BtTemperatureResponse;
+import com.example.jkn.bluetoothtest.btresponse.BtTimeResponse;
 import com.example.jkn.bluetoothtest.cards.IconActionCard;
 import com.example.jkn.bluetoothtest.cards.TextActionCard;
 
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     private static final int REQUEST_PERMISSION_CHECK = 2;
 
     private static final int TEMP_READ_INTERVAL = 5000;
+    private static final int TIME_READ_INTERVAL = 5000;
 
     private BluetoothAdapter mBtAdapter;
     private BluetoothDevice mBtDevice;
@@ -52,9 +55,11 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     private IconActionCard testAction;
     private IconActionCard bluetoothStatusCard;
     private TextActionCard tempStatusCard;
+    private TextActionCard timeCard;
 
     private Handler mHandler;
     private Runnable mTemperatureReadingThread;
+    private Runnable mTimeReadingThread;
 
     private boolean mIsLedOn = false;
 
@@ -68,8 +73,9 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
         initDeviceDiscoveryReceiver();
         registerDeviceDiscoveryReceiver();
 
-        createTemperatureScheduler();
+        createScheduler();
         createTemperatureReadingThread();
+        createTimeReadingThread();
     }
 
     private void setViewReferences() {
@@ -77,9 +83,10 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
         testAction = (IconActionCard) findViewById(R.id.btn_test_data);
         bluetoothStatusCard = (IconActionCard) findViewById(R.id.btn_bluetooth);
         tempStatusCard = (TextActionCard) findViewById(R.id.temperature_card);
+        timeCard = (TextActionCard) findViewById(R.id.time_card);
     }
 
-    private void createTemperatureScheduler() {
+    private void createScheduler() {
         mHandler = new Handler();
     }
 
@@ -96,12 +103,33 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
         };
     }
 
+    private void createTimeReadingThread() {
+        mTimeReadingThread = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    requestTime();
+                } finally {
+                    mHandler.postDelayed(mTimeReadingThread, TIME_READ_INTERVAL);
+                }
+            }
+        };
+    }
+
     private void startTemperatureReading() {
         mTemperatureReadingThread.run();
     }
 
     private void stopTemperatureReading() {
         mHandler.removeCallbacks(mTemperatureReadingThread);
+    }
+
+    private void startTimeReading() {
+        mTimeReadingThread.run();
+    }
+
+    private void stopTimeReading() {
+        mHandler.removeCallbacks(mTimeReadingThread);
     }
 
     private void setClickListeners() {
@@ -140,6 +168,10 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
 
     private void requestTemperature() {
         writeBtMessage(BtCommands.REQUEST_TEMPERATURE);
+    }
+
+    private void requestTime() {
+        writeBtMessage(BtCommands.REQUEST_TIME);
     }
 
     @Override
@@ -248,6 +280,7 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
         Log.d(TAG, "Connection attempt succeeded.");
 
         startTemperatureReading();
+        startTimeReading();
     }
 
     @Override
@@ -271,6 +304,10 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
             switch (btResponse.getResponseType()) {
                 case TEMPERATURE:
                     handleTemperatureResponse((BtTemperatureResponse) btResponse);
+                    break;
+                case TIME:
+                    handleTimeResponse((BtTimeResponse) btResponse);
+                    break;
             }
         } catch (BtException e) {
             Log.d(TAG, e.getMessage(), e);
@@ -281,12 +318,25 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
         updateTemperature(temperatureResponse.getTemperature());
     }
 
+    private void handleTimeResponse(BtTimeResponse timeResponse) {
+        updateTime(timeResponse.getTime());
+    }
+
     private void updateTemperature(final float temperature) {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 tempStatusCard.setActionText(String.valueOf(temperature) + "°");
-                tempStatusCard.setTextBottom(Utils.getReadableTimestamp());
+                tempStatusCard.setTextBottom(Utils.getReadableDateTime());
+            }
+        });
+    }
+
+    private void updateTime(final Date time) {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                timeCard.setActionText(Utils.getShortTimeFromDate(time));
             }
         });
     }
@@ -360,6 +410,7 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
         killConnectThread();
         killConnectedThread();
         stopTemperatureReading();
+        stopTimeReading();
         super.onPause();
     }
 

@@ -10,9 +10,14 @@ import java.util.Locale;
 
 public class Utils {
 
-    public static String getReadableTimestamp() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("d.M.yy - HH:mm", Locale.getDefault());
+    public static String getReadableDateTime() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("d.M.yy - H:mm", Locale.getDefault());
         return dateFormat.format(new Date());
+    }
+
+    public static String getShortTimeFromDate(Date time) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("H:mm", Locale.getDefault());
+        return dateFormat.format(time);
     }
 
 }

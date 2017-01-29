@@ -6,6 +6,7 @@ package com.example.jkn.bluetoothtest;
 
 class BtCommands {
 
-    static final String REQUEST_TEMPERATURE = "TMP";
+    static final String REQUEST_TEMPERATURE = "TEMP";
+    static final String REQUEST_TIME = "TIME";
 
 }
