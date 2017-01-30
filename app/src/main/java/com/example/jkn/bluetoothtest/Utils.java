@@ -20,4 +20,8 @@ public class Utils {
         return dateFormat.format(time);
     }
 
+    public static int getCurrentTimestamp() {
+        return (int) (new Date().getTime() / 1000);
+    }
+
 }

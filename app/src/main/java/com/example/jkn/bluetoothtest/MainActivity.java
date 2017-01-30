@@ -150,6 +150,13 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
                 writeBtMessage(onCommand);
             }
         });
+        timeCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String setTimeCommand = String.format(BtCommands.SET_TIME, Utils.getCurrentTimestamp());
+                writeBtMessage(setTimeCommand);
+            }
+        });
     }
 
     private void switchTestLedOn() {
