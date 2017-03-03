@@ -16,7 +16,6 @@
 
         <com.example.jkn.bluetoothtest.cards.TextActionCard
             android:id="@+id/temperature_card"
-            app:icon="@drawable/ic_light_on"
             app:layout_heightPercent="100%"
             app:layout_widthPercent="50%"
             app:textAction="\?"
@@ -24,13 +23,14 @@
             app:textTop="Temperature" />
 
         <com.example.jkn.bluetoothtest.cards.IconActionCard
-            android:id="@+id/btn_led"
+            android:id="@+id/btn_color"
             android:layout_height="match_parent"
             android:layout_toRightOf="@id/temperature_card"
-            app:icon="@drawable/ic_light_off"
+            app:icon="@drawable/ic_color"
             app:layout_heightPercent="100%"
             app:layout_widthPercent="50%"
-            app:textTop="Test LED" />
+            app:textTop="Change color"
+            app:textBottom="255/255/255"/>
 
     </android.support.percent.PercentRelativeLayout>
 
@@ -44,18 +44,8 @@
             android:id="@+id/time_card"
             app:textAction="\?"
             app:layout_heightPercent="100%"
-            app:layout_widthPercent="50%"
+            app:layout_widthPercent="100%"
             app:textTop="Time" />
-
-        <com.example.jkn.bluetoothtest.cards.TextActionCard
-            android:id="@+id/brightness_card"
-            android:layout_height="match_parent"
-            android:layout_toRightOf="@id/time_card"
-            app:layout_heightPercent="100%"
-            app:layout_widthPercent="50%"
-            app:textBottom="no data"
-            app:textAction="\?"
-            app:textTop="Brightness" />
 
     </android.support.percent.PercentRelativeLayout>
 
@@ -66,20 +56,11 @@
         android:orientation="horizontal">
 
         <com.example.jkn.bluetoothtest.cards.IconActionCard
-            android:id="@+id/btn_test_data"
-            android:layout_weight="1"
-            app:icon="@drawable/ic_debug"
-            app:layout_heightPercent="100%"
-            app:layout_widthPercent="50%"
-            app:textTop="Send test data" />
-
-        <com.example.jkn.bluetoothtest.cards.IconActionCard
             android:id="@+id/btn_bluetooth"
-            android:layout_toRightOf="@id/btn_test_data"
             android:layout_weight="1"
             app:icon="@drawable/ic_bluetooth_disconnect"
             app:layout_heightPercent="100%"
-            app:layout_widthPercent="50%"
+            app:layout_widthPercent="100%"
             app:textBottom="disconnected"
             app:textTop="Connection" />
 

@@ -51,8 +51,7 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     private BroadcastReceiver mDeviceDiscoveryReceiver;
     private BtConnectionStatus mBtConnectionStatus;
 
-    private IconActionCard ledAction;
-    private IconActionCard testAction;
+    private IconActionCard colorAction;
     private IconActionCard bluetoothStatusCard;
     private TextActionCard tempStatusCard;
     private TextActionCard timeCard;
@@ -79,8 +78,7 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     }
 
     private void setViewReferences() {
-        ledAction = (IconActionCard) findViewById(R.id.btn_led);
-        testAction = (IconActionCard) findViewById(R.id.btn_test_data);
+        colorAction = (IconActionCard) findViewById(R.id.btn_color);
         bluetoothStatusCard = (IconActionCard) findViewById(R.id.btn_bluetooth);
         tempStatusCard = (TextActionCard) findViewById(R.id.temperature_card);
         timeCard = (TextActionCard) findViewById(R.id.time_card);
@@ -133,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     }
 
     private void setClickListeners() {
-        ledAction.setOnClickListener(new View.OnClickListener() {
+        colorAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mIsLedOn) {
@@ -143,11 +141,12 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
                 }
             }
         });
-        testAction.setOnClickListener(new View.OnClickListener() {
+        colorAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String onCommand = "Very long test data text. äöüß Check if separated. äüü";
-                writeBtMessage(onCommand);
+                HSVColor randomColor = HSVColor.random();
+                String colorCommand = String.format(BtCommands.SET_COLOR, randomColor.getHue(), randomColor.getSaturation(), randomColor.getValue());
+                writeBtMessage(colorCommand);
             }
         });
         timeCard.setOnClickListener(new View.OnClickListener() {
@@ -163,14 +162,14 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
         String onCommand = "on";
         writeBtMessage(onCommand);
         mIsLedOn = true;
-        ledAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_light_on));
+        colorAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_light_on));
     }
 
     private void switchTestLedOff() {
         String onCommand = "off";
         writeBtMessage(onCommand);
         mIsLedOn = false;
-        ledAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_light_off));
+        colorAction.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_light_off));
     }
 
     private void requestTemperature() {
