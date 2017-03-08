@@ -18,10 +18,19 @@ public class HSVColor {
         this.value = value;
     }
 
-    public static HSVColor random() {
+    public static HSVColor randomHue() {
         Random rand = new Random();
 
-        return new HSVColor(rand.nextInt(256), rand.nextInt(256), 255);
+        return new HSVColor(rand.nextInt(256), 255, 255);
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(this.hue) +
+                "/" +
+                String.valueOf(this.saturation) +
+                "/" +
+                String.valueOf(this.value);
     }
 
     public int getHue() {

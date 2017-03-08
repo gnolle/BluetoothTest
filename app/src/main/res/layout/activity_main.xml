@@ -14,23 +14,24 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <com.example.jkn.bluetoothtest.cards.TextActionCard
-            android:id="@+id/temperature_card"
-            app:layout_heightPercent="100%"
-            app:layout_widthPercent="50%"
-            app:textAction="\?"
-            app:textBottom="no data"
-            app:textTop="Temperature" />
-
         <com.example.jkn.bluetoothtest.cards.IconActionCard
             android:id="@+id/btn_color"
             android:layout_height="match_parent"
-            android:layout_toRightOf="@id/temperature_card"
             app:icon="@drawable/ic_color"
             app:layout_heightPercent="100%"
             app:layout_widthPercent="50%"
             app:textTop="Change color"
             app:textBottom="255/255/255"/>
+
+        <com.example.jkn.bluetoothtest.cards.IconActionCard
+            android:layout_toRightOf="@id/btn_color"
+            android:id="@+id/btn_mode"
+            android:layout_height="match_parent"
+            app:icon="@drawable/ic_debug"
+            app:layout_heightPercent="100%"
+            app:layout_widthPercent="50%"
+            app:textTop="Change mode"
+            app:textBottom="Time only"/>
 
     </android.support.percent.PercentRelativeLayout>
 
@@ -41,10 +42,19 @@
         android:orientation="horizontal">
 
         <com.example.jkn.bluetoothtest.cards.TextActionCard
+            android:id="@+id/temperature_card"
+            app:layout_heightPercent="100%"
+            app:layout_widthPercent="50%"
+            app:textAction="\?"
+            app:textBottom="no data"
+            app:textTop="Temperature" />
+
+        <com.example.jkn.bluetoothtest.cards.TextActionCard
+            android:layout_toRightOf="@id/temperature_card"
             android:id="@+id/time_card"
             app:textAction="\?"
             app:layout_heightPercent="100%"
-            app:layout_widthPercent="100%"
+            app:layout_widthPercent="50%"
             app:textTop="Time" />
 
     </android.support.percent.PercentRelativeLayout>

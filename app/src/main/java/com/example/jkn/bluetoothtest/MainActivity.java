@@ -55,12 +55,14 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     private IconActionCard bluetoothStatusCard;
     private TextActionCard tempStatusCard;
     private TextActionCard timeCard;
+    private IconActionCard modeCard;
 
     private Handler mHandler;
     private Runnable mTemperatureReadingThread;
     private Runnable mTimeReadingThread;
 
     private boolean mIsLedOn = false;
+    private int mMode = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
         bluetoothStatusCard = (IconActionCard) findViewById(R.id.btn_bluetooth);
         tempStatusCard = (TextActionCard) findViewById(R.id.temperature_card);
         timeCard = (TextActionCard) findViewById(R.id.time_card);
+        modeCard = (IconActionCard) findViewById(R.id.btn_mode);
     }
 
     private void createScheduler() {
@@ -144,9 +147,10 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
         colorAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                HSVColor randomColor = HSVColor.random();
+                HSVColor randomColor = HSVColor.randomHue();
                 String colorCommand = String.format(BtCommands.SET_COLOR, randomColor.getHue(), randomColor.getSaturation(), randomColor.getValue());
                 writeBtMessage(colorCommand);
+                colorAction.setTextBottom(randomColor.toString());
             }
         });
         timeCard.setOnClickListener(new View.OnClickListener() {
@@ -154,6 +158,19 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
             public void onClick(View view) {
                 String setTimeCommand = String.format(BtCommands.SET_TIME, Utils.getCurrentTimestamp());
                 writeBtMessage(setTimeCommand);
+            }
+        });
+
+        modeCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String setModeCommand = String.format(BtCommands.SET_MODE, mMode);
+                writeBtMessage(setModeCommand);
+                if (mMode == 0)
+                    modeCard.setTextBottom("Time only");
+                else
+                    modeCard.setTextBottom("Time / Temperature");
+                mMode = (mMode + 1) % 2;
             }
         });
     }
