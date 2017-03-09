@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     private IconActionCard bluetoothStatusCard;
     private TextActionCard tempStatusCard;
     private TextActionCard timeCard;
+    private TextActionCard brightnessCard;
     private IconActionCard modeCard;
 
     private Handler mHandler;
@@ -63,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
 
     private boolean mIsLedOn = false;
     private int mMode = 0;
+    private int mBrightnessSteps = 11;
+    private int mBrightness = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
         bluetoothStatusCard = (IconActionCard) findViewById(R.id.btn_bluetooth);
         tempStatusCard = (TextActionCard) findViewById(R.id.temperature_card);
         timeCard = (TextActionCard) findViewById(R.id.time_card);
+        brightnessCard = (TextActionCard) findViewById(R.id.btn_brightness);
         modeCard = (IconActionCard) findViewById(R.id.btn_mode);
     }
 
@@ -164,13 +168,28 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
         modeCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mMode = (mMode + 1) % 2;
+
                 String setModeCommand = String.format(BtCommands.SET_MODE, mMode);
                 writeBtMessage(setModeCommand);
                 if (mMode == 0)
                     modeCard.setTextBottom("Time only");
                 else
                     modeCard.setTextBottom("Time / Temperature");
-                mMode = (mMode + 1) % 2;
+            }
+        });
+
+        brightnessCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mBrightness = (mBrightness + 1) % mBrightnessSteps;
+
+                int calculatedBrightness = (255 / mBrightnessSteps) * mBrightness;
+
+                String setBrightnessCommand = String.format(BtCommands.SET_BRIGHTNESS, calculatedBrightness);
+                writeBtMessage(setBrightnessCommand);
+
+                brightnessCard.setActionText(mBrightness * 10 + "%");
             }
         });
     }
