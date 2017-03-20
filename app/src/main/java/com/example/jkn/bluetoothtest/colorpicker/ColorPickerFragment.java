@@ -59,7 +59,6 @@ public class ColorPickerFragment extends DialogFragment implements SeekBar.OnSee
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.activity_color, container, false);
 
         setViewReferences(view);
@@ -121,7 +120,6 @@ public class ColorPickerFragment extends DialogFragment implements SeekBar.OnSee
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         calculateCurrentColor();
-        notifyColorChanged();
         updateColorField();
     }
 
@@ -134,6 +132,7 @@ public class ColorPickerFragment extends DialogFragment implements SeekBar.OnSee
     public void onStopTrackingTouch(SeekBar seekBar) {
         updateColorName();
         showColorName();
+        notifyColorChanged();
     }
 
     private void notifyColorChanged() {
