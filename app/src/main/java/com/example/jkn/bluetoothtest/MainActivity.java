@@ -2,6 +2,7 @@ package com.example.jkn.bluetoothtest;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -25,6 +26,7 @@ import com.example.jkn.bluetoothtest.btresponse.BtTemperatureResponse;
 import com.example.jkn.bluetoothtest.btresponse.BtTimeResponse;
 import com.example.jkn.bluetoothtest.cards.IconActionCard;
 import com.example.jkn.bluetoothtest.cards.TextActionCard;
+import com.example.jkn.bluetoothtest.colorpicker.ColorPickerFragment;
 
 import java.util.Date;
 import java.util.UUID;
@@ -32,7 +34,7 @@ import java.util.UUID;
 /**
  * Activity to connect to HC-05 Bluetooth module.
  */
-public class MainActivity extends AppCompatActivity implements BtConnectThread.BtConnectionCallback, BtConnectedThread.BtResponseListener {
+public class MainActivity extends AppCompatActivity implements BtConnectThread.BtConnectionCallback, BtConnectedThread.BtResponseListener, ColorPickerFragment.ColorPickerListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -151,10 +153,7 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
         colorAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                HSVColor randomColor = HSVColor.randomHue();
-                String colorCommand = String.format(BtCommands.SET_COLOR, randomColor.getHue(), randomColor.getSaturation(), randomColor.getValue());
-                writeBtMessage(colorCommand);
-                colorAction.setTextBottom(randomColor.toString());
+                showColorPicker();
             }
         });
         timeCard.setOnClickListener(new View.OnClickListener() {
@@ -192,6 +191,12 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
                 brightnessCard.setActionText(mBrightness * 10 + "%");
             }
         });
+    }
+
+    private void sendColorCommand(HSVColor color) {
+        String colorCommand = String.format(BtCommands.SET_COLOR, color.getHue(), color.getSaturation(), color.getValue());
+        writeBtMessage(colorCommand);
+        colorAction.setTextBottom(color.toString());
     }
 
     private void switchTestLedOn() {
@@ -445,6 +450,18 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     private void registerDeviceDiscoveryReceiver() {
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mDeviceDiscoveryReceiver, filter);
+    }
+
+    private void showColorPicker() {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+
+        ColorPickerFragment colorPicker = new ColorPickerFragment();
+        colorPicker.show(ft, "colorPicker");
+    }
+
+    @Override
+    public void onColorPicked(HSVColor pickedColor) {
+        sendColorCommand(pickedColor);
     }
 
     @Override
