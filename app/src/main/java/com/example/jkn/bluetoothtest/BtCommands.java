@@ -10,5 +10,4 @@ class BtCommands {
     static final String SET_TIME = "SETTIME%d";
     static final String SET_COLOR = "SETCOLOR%d,%d,%d";
     static final String SET_MODE = "SETMODE%d";
-    static final String SET_BRIGHTNESS = "SETBRIGHT%d";
 }

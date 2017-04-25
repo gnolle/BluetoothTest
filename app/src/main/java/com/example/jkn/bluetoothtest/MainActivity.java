@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
     private IconActionCard bluetoothStatusCard;
     private TextActionCard tempStatusCard;
     private TextActionCard timeCard;
-    private TextActionCard brightnessCard;
     private IconActionCard modeCard;
 
     private Handler mHandler;
@@ -89,7 +88,6 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
         bluetoothStatusCard = (IconActionCard) findViewById(R.id.btn_bluetooth);
         tempStatusCard = (TextActionCard) findViewById(R.id.temperature_card);
         timeCard = (TextActionCard) findViewById(R.id.time_card);
-        brightnessCard = (TextActionCard) findViewById(R.id.btn_brightness);
         modeCard = (IconActionCard) findViewById(R.id.btn_mode);
     }
 
@@ -175,20 +173,6 @@ public class MainActivity extends AppCompatActivity implements BtConnectThread.B
                     modeCard.setTextBottom("Time only");
                 else
                     modeCard.setTextBottom("Time / Temperature");
-            }
-        });
-
-        brightnessCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mBrightness = (mBrightness + 1) % mBrightnessSteps;
-
-                int calculatedBrightness = (255 / mBrightnessSteps) * mBrightness;
-
-                String setBrightnessCommand = String.format(BtCommands.SET_BRIGHTNESS, calculatedBrightness);
-                writeBtMessage(setBrightnessCommand);
-
-                brightnessCard.setActionText(mBrightness * 10 + "%");
             }
         });
     }
